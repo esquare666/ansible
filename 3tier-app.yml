@@ -1,0 +1,20 @@
+---
+- name: 3 tier application setup
+  hosts: all
+  roles:
+    - configuration
+
+- name: Install HAProxy
+  hosts: frontends
+  roles:
+    - haproxy
+
+- name: Install Tomcat on Application Servers
+  hosts: apps
+  roles:
+    - tomcat
+
+- name: Install Postgrsql and Start the Service
+  hosts: appdbs
+  roles:
+    - postgresql
