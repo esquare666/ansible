@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  become: true
+  #become: true
   gather_facts: false
   tasks:
     - name: create bin directory
