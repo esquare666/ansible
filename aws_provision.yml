@@ -5,23 +5,23 @@
   tasks:
     - name: create bin directory
       file:
-        path: /root/bin
+        path: /tmp/bin
         state: directory
     - name: get script common.sh
       get_url:
         url: "{{ param_repo_base }}/scripts/common.sh"
-        dest: /root/common.sh
+        dest: /tmp/common.sh
         mode: 0755
 
     - name: get script jq
       get_url: 
         url: "{{ param_repo_base }}/scripts/jq-linux64"
-        dest: /root/bin/jq
+        dest: /tmp/bin/jq
         mode: 0755
     - name: get script order_svc.sh
       get_url:
         url: "{{ param_repo_base }}/scripts/order_svc.sh"
-        dest: /root/order_svc.sh
+        dest: /tmp/order_svc.sh
         mode: 0755
     - name: create credentials
       copy:
@@ -29,22 +29,22 @@
           export username={{ param_user }}
           export password={{ param_password }}
           export uri=https://labs.opentlc.com
-        dest: /root/credential.rc
+        dest: /tmp/credential.rc
         mode: 0755
 
     # Fix the existing shell scripts to reference jq command with bin/jq
     - name: fix scripts
       shell: "sed -i 's/ jq/ bin\\/jq/g' {{ item }}"
       with_items:
-        - /root/common.sh
-        - /root/order_svc.sh
+        - /tmp/common.sh
+        - /tmp/order_svc.sh
 
     # Using this script will always deploy environments in the us-east-1 region.
     # TODO: this shell task is not working yet!
     - name: order service on opentlc
-      shell: source /root/credential.rc; /root/order_svc.sh -y -c 'OPENTLC Automation' -i 'Three Tier Application' -t 1
+      shell: source /tmp/credential.rc; /tmp/order_svc.sh -y -c 'OPENTLC Automation' -i 'Three Tier Application' -t 1
       args:
-        chdir: /root
+        chdir: /tmp
     - name: Wait for mail
       pause:
         minutes: 10 
